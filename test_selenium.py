@@ -11,8 +11,6 @@ from selenium.webdriver.common.keys import Keys
 class Test_bmo:
     def setup_method(self):
         self.driver=webdriver.Chrome(ChromeDriverManager().install())
-    def teardown_method(self):
-        self.driver.quit()
 
     def test_bmo(self):
         expected_result ="I forgot my password"
@@ -28,15 +26,15 @@ class Test_bmo:
         requestPassword=self.driver.find_element(By.XPATH,"/html/body/ui-view/login/div/div/div[2]/div/form/div[4]/a")
         assert requestPassword.text.strip() == expected_result
 
+    def teardown_method(self):
+        self.driver.quit()
+
 # BMO sitesine login olurken geçersiz username ve/veya password girildiği durumda
 # vermesi gereken "T.C. Kimlik Numarası/Sicil No ve/veya Parolanız Yanlıştır"
 # hata mesajının kontrolü.
 class Test_bmoLoginAlert:
     def setup_method(self):
         self.driver=webdriver.Chrome(ChromeDriverManager().install())
-
-    def teardown_method(self):
-        self.driver.quit()
     
     @pytest.mark.parametrize("username,password",[("123456789101112","osman3"),("abcdabcdabcd","osman3")])
     def test_invalid_login(self,username,password):
@@ -56,15 +54,15 @@ class Test_bmoLoginAlert:
         WebDriverWait(self.driver,5).until(expected_conditions.visibility_of_element_located((By.XPATH,"/html/body/ui-view/login/div/div/div[2]/div/form/div[2]/div[1]/span")))
         errLabel = self.driver.find_element(By.XPATH,"/html/body/ui-view/login/div/div/div[2]/div/form/div[2]/div[1]/span")
         assert errLabel.text.strip() == expected_message
+    
+    def teardown_method(self):
+        self.driver.quit()
 
 # Türk Telekom sitesine login olurken phoneNumber ve/veya password girdi alanları
 # boş bırakıldığı durumda "Bu alanın doldurulması zorunludur" uyarı mesajının kontrolü.
 class Test_tt:
     def setup_method(self):
         self.driver=webdriver.Chrome(ChromeDriverManager().install())
-
-    def teardown_method(self):
-        self.driver.quit()
 
     def test_empty(self):
         expected_result ="Bu alanın doldurulması zorunludur"
@@ -81,3 +79,6 @@ class Test_tt:
         errLabel = self.driver.find_element(By.XPATH,"/html/body/div[1]/div/div[2]/div/div/div[1]/div[1]/div[2]/form/div[2]/div/span/span")
         assert errLabel.text.strip() == expected_result
         sleep(2)
+    
+    def teardown_method(self):
+        self.driver.quit()
